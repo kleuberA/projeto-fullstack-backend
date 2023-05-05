@@ -106,12 +106,17 @@ export async function user(req: Request, res: Response) {
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-		// const user = await prisma.user.findUnique({
-		// 	where: { id: decoded.id },
-		// });
-		// if (!user) {
-		// 	throw new Error("User not found");
-		// }
+		const user = await prisma.user.findUnique({
+			where: { id: decoded.userId },
+			select: {
+				username: true,
+			},
+		});
+
+		if (!user) {
+			throw new Error("User not found");
+		}
+
 		res.json({ username: user.username });
 	} catch (err) {
 		console.error(err.message);
